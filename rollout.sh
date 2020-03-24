@@ -92,7 +92,7 @@ if [ "$RUN_SCORE" == "true" ]; then
 fi
 
 if [ "$DATA_ONLY" == "true" ]; then
-    SCRIPT_LIST=$(ls -d $PWD/{00..05}*)
+    SCRIPT_LIST=$(ls -d $PWD/{00..04}*)
 else
     SCRIPT_LIST=$(ls -d $PWD/0*)
 fi
