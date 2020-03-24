@@ -20,8 +20,9 @@ RUN_MULTI_USER="${12}"
 RUN_MULTI_USER_REPORT="${13}"
 RUN_SCORE="${14}"
 SINGLE_USER_ITERATIONS="${15}"
+DATA_ONLY="${16}"
 
-if [[ "$GEN_DATA_SCALE" == "" || "$EXPLAIN_ANALYZE" == "" || "$RANDOM_DISTRIBUTION" == "" || "$MULTI_USER_COUNT" == "" || "$RUN_COMPILE_TPCDS" == "" || "$RUN_GEN_DATA" == "" || "$RUN_INIT" == "" || "$RUN_DDL" == "" || "$RUN_LOAD" == "" || "$RUN_SQL" == "" || "$RUN_SINGLE_USER_REPORT" == "" || "$RUN_MULTI_USER" == "" || "$RUN_MULTI_USER_REPORT" == "" || "$RUN_SCORE" == "" || "$SINGLE_USER_ITERATIONS" == "" ]]; then
+if [[ "$GEN_DATA_SCALE" == "" || "$EXPLAIN_ANALYZE" == "" || "$RANDOM_DISTRIBUTION" == "" || "$MULTI_USER_COUNT" == "" || "$RUN_COMPILE_TPCDS" == "" || "$RUN_GEN_DATA" == "" || "$RUN_INIT" == "" || "$RUN_DDL" == "" || "$RUN_LOAD" == "" || "$RUN_SQL" == "" || "$RUN_SINGLE_USER_REPORT" == "" || "$RUN_MULTI_USER" == "" || "$RUN_MULTI_USER_REPORT" == "" || "$RUN_SCORE" == "" || "$SINGLE_USER_ITERATIONS" == "" || "$DATA_ONLY" == "" ]]; then
 	echo "Please run this script from tpcds.sh so the correct parameters are passed to it."
 	exit 1
 fi
@@ -56,6 +57,7 @@ echo "SINGLE_USER_ITERATIONS: $SINGLE_USER_ITERATIONS"
 echo "RUN_SINGLE_USER_REPORT: $RUN_SINGLE_USER_REPORT"
 echo "RUN_MULTI_USER: $RUN_MULTI_USER"
 echo "RUN_MULTI_USER_REPORT: $RUN_MULTI_USER_REPORT"
+echo "DATA_ONLY: $DATA_ONLY"
 echo "############################################################################"
 echo ""
 if [ "$RUN_COMPILE_TPCDS" == "true" ]; then
@@ -89,7 +91,13 @@ if [ "$RUN_SCORE" == "true" ]; then
 	rm -f $PWD/log/end_score.log
 fi
 
-for i in $(ls -d $PWD/0*); do
+if [ "$DATA_ONLY" == "true" ]; then
+    SCRIPT_LIST=$(ls -d $PWD/{01..05}*)
+else
+    SCRIPT_LIST=$(ls -d $PWD/0*)
+fi
+
+for i in $SCRIPT_LIST; do
 	echo "$i/rollout.sh"
 	$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $SINGLE_USER_ITERATIONS
 done
